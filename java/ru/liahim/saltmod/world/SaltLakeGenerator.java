@@ -1,0 +1,405 @@
+package ru.liahim.saltmod.world;
+
+import java.util.Random;
+
+import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraftforge.fml.common.IWorldGenerator;
+import ru.liahim.saltmod.init.ModBlocks;
+import ru.liahim.saltmod.init.SaltConfig;
+
+public class SaltLakeGenerator implements IWorldGenerator {
+
+	@Override
+	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider)
+    {   
+		switch(world.provider.getDimensionId())
+		{
+			case 0:
+			generateOverworld(world, random, chunkX*16, chunkZ*16);
+			break;
+		}
+	}
+	
+	public void generateOverworld(World world, Random rand, int X1, int Z1) {
+		
+		if (!world.isRemote)
+		{
+		
+		int rad = SaltConfig.saltLakeRadius;
+		
+        int randPosX = X1 + rand.nextInt(16);
+        int randPosZ = Z1 + rand.nextInt(16);
+        
+//Chance
+    	if (rand.nextInt(SaltConfig.saltLakeGroupRarity) == 0 &&
+            world.getBiomeGenForCoords(new BlockPos(randPosX, 60, randPosZ)) != BiomeGenBase.swampland){
+    		
+//The number of lakes in the group
+    	for (int G = 0; G < SaltConfig.saltLakeQuantity; G++){
+    	
+//Site selection
+        for (int randPosY = 60; randPosY < 75; randPosY++){
+
+        BlockPos posCenter = new BlockPos(randPosX, randPosY, randPosZ);        
+        	
+        if ((world.getBlockState(posCenter).getBlock() == Blocks.grass ||
+        	 world.getBlockState(posCenter).getBlock() == Blocks.stone) &&
+        	 world.getBlockState(posCenter.west(2)).getBlock().getMaterial().isSolid() &&
+        	 world.getBlockState(posCenter.east(2)).getBlock().getMaterial().isSolid() &&
+        	 world.getBlockState(posCenter.north(2)).getBlock().getMaterial().isSolid() &&
+        	 world.getBlockState(posCenter.south(2)).getBlock().getMaterial().isSolid() &&
+        	 world.getBlockState(posCenter.down(3)).getBlock().getMaterial().isSolid() &&
+        	 world.getLightFromNeighbors(posCenter.up()) >= 13 &&
+        	 world.getLightFromNeighbors(posCenter.add(-2, 1, 0)) >= 13 &&
+        	 world.getLightFromNeighbors(posCenter.add(2, 1, 0)) >= 13 &&
+        	 world.getLightFromNeighbors(posCenter.add(0, 1, -2)) >= 13 &&
+        	 world.getLightFromNeighbors(posCenter.add(0, 1, 2)) >= 13){
+
+        		world.setBlockToAir(posCenter.up());
+        		world.setBlockToAir(posCenter.down());
+        		world.setBlockState(posCenter.down(2), ModBlocks.saltLake.getDefaultState(), 3);
+        		world.setBlockState(posCenter.down(3), ModBlocks.saltOre.getDefaultState(), 3);
+        		world.setBlockState(posCenter.down(4), ModBlocks.saltOre.getDefaultState(), 3);
+        		world.setBlockState(posCenter.down(5), Blocks.stone.getDefaultState(), 3);
+        		world.setBlockState(posCenter.down(6), Blocks.stone.getDefaultState(), 3);
+        	
+//Growth
+        	for (int i = 2; i <= rad; i++) {
+        		
+            for (int x = randPosX - i; x <= randPosX + i; x++) {
+            for (int z = randPosZ - i; z <= randPosZ + i; z++) {
+            	
+            	BlockPos pos = new BlockPos(x, randPosY, z);
+            	BlockPos pos_2 = new BlockPos(pos.down(2));
+            	
+            	if (rand.nextInt(2) == 0 &&
+                   	world.getBlockState(pos.west()).getBlock().getMaterial().isSolid() &&
+                   	world.getBlockState(pos.east()).getBlock().getMaterial().isSolid() &&
+                   	world.getBlockState(pos.north()).getBlock().getMaterial().isSolid() &&
+                   	world.getBlockState(pos.south()).getBlock().getMaterial().isSolid() &&
+                   	world.getBlockState(pos.down(3)).getBlock().getMaterial().isSolid() &&
+            		world.getLightFromNeighbors(pos.up()) >= 14 &&
+            	   (world.getBlockState(pos_2.west()).getBlock() == ModBlocks.saltLake ||
+            		world.getBlockState(pos_2.east()).getBlock() == ModBlocks.saltLake ||
+            		world.getBlockState(pos_2.north()).getBlock() == ModBlocks.saltLake ||
+            		world.getBlockState(pos_2.south()).getBlock() == ModBlocks.saltLake))
+            		{
+            			world.setBlockToAir(pos.up());
+                		world.setBlockToAir(pos.down());
+            			world.setBlockState(pos_2, ModBlocks.saltBlock.getDefaultState(), 3);
+            		}
+            }
+            }
+            
+            for (int x = randPosX - i; x <= randPosX + i; x++) {
+            for (int z = randPosZ - i; z <= randPosZ + i; z++) {
+            
+            	BlockPos pos = new BlockPos(x, randPosY, z);
+            	
+            	if (world.getBlockState(pos.down(2)).getBlock() == ModBlocks.saltBlock)
+            	{
+            		
+        			world.setBlockState(pos.down(2), ModBlocks.saltLake.getDefaultState(), 3);
+        			world.setBlockState(pos.down(5), Blocks.stone.getDefaultState(), 3);
+        			
+        			if (rand.nextInt(2) == 0)
+        			{
+        				world.setBlockState(pos.down(3), ModBlocks.saltOre.getDefaultState(), 3);
+        				world.setBlockState(pos.down(6), Blocks.stone.getDefaultState(), 3);
+
+        				if  (rand.nextInt(5) == 0)
+        				{
+        					world.setBlockState(pos.down(4), ModBlocks.saltOre.getDefaultState(), 3);
+        				}
+        				
+        				else
+            			{
+        					world.setBlockState(pos.down(4), Blocks.stone.getDefaultState(), 3);
+            			}
+        					
+        			}
+        			
+        			else
+        			{
+        				world.setBlockState(pos.down(3), Blocks.stone.getDefaultState(), 3);
+        			}
+        			
+        			if (world.getLightFromNeighbors(pos.up()) <= 14 && rand.nextInt(5) == 0)
+        			{
+        				if (rand.nextInt(4) == 0)
+        				{
+        					world.setBlockState(pos.down(1), ModBlocks.saltCrystal.getStateFromMeta(1), 3);
+        				}
+        				else
+        				{
+        					world.setBlockState(pos.down(1), ModBlocks.saltCrystal.getStateFromMeta(2), 3);
+        				}
+        			}
+            	}
+            }
+            }
+            
+            }
+            
+//Making shores
+            for (int x = randPosX - rad; x <= randPosX + rad; x++) {
+            for (int z = randPosZ - rad; z <= randPosZ + rad; z++) {
+            	
+            	BlockPos pos = new BlockPos(x, randPosY, z);
+            	BlockPos pos1 = pos.up();
+            	BlockPos pos_1 = pos.down();
+            	BlockPos pos_2 = pos.down(2);
+            	BlockPos pos_3 = pos.down(3);
+            	
+            	if (world.getBlockState(pos_2).getBlock() == ModBlocks.saltLake)
+            	{
+            		world.setBlockToAir(pos);
+            	}
+            	
+            	else
+            	{
+        			int jf = 0;
+					if (world.getBlockState(pos_2.north()).getBlock() == ModBlocks.saltLake)
+					{jf = jf + 1;}
+					if (world.getBlockState(pos_2.east()).getBlock() == ModBlocks.saltLake)
+					{jf = jf + 2;}
+					if (world.getBlockState(pos_2.south()).getBlock() == ModBlocks.saltLake)
+					{jf = jf + 4;}
+					if (world.getBlockState(pos_2.west()).getBlock() == ModBlocks.saltLake)
+					{jf = jf + 8;}
+					
+    				int jc = 0;
+    				if (world.getBlockState(pos_2.add(1, 0, -1)).getBlock() == ModBlocks.saltLake)
+    				{jc = jc + 1;}
+    				if (world.getBlockState(pos_2.add(1, 0, 1)).getBlock() == ModBlocks.saltLake)
+    				{jc = jc + 2;}
+    				if (world.getBlockState(pos_2.add(-1, 0, 1)).getBlock() == ModBlocks.saltLake)
+    				{jc = jc + 4;}
+    				if (world.getBlockState(pos_2.add(-1, 0, -1)).getBlock() == ModBlocks.saltLake)
+    				{jc = jc + 8;}
+    				
+    				int j = 0;
+                	if(jf==0&&jc==1){j=3;}else if(jf==0&&jc==2){j=4;}
+                	else if(jf==0&&jc==4){j=5;}else if(jf==0&&jc==8){j=6;}
+                	else if((jf==0&&jc==9)||(jf==1&&(jc==0||jc==1||jc==8||jc==9))){j=7;}
+                	else if((jf==0&&jc==3)||(jf==2&&(jc==0||jc==1||jc==2||jc==3))){j=8;}
+                	else if((jf==0&&jc==6)||(jf==4&&(jc==0||jc==2||jc==4||jc==6))){j=9;}
+                	else if((jf==0&&jc==12)||(jf==8&&(jc==0||jc==4||jc==8||jc==12))){j=10;}
+                	else if((jf==0&&jc==11)||jf==1&&(jc==2||jc==3||jc==10||jc==11)||jf==2&&(jc>=8&&jc<=11)||(jf==3&&((jc>=0&&jc<=3)||(jc>=8&&jc<=11)))){j=11;}
+                	else if((jf==0&&jc==7)||jf==2&&(jc>=4&&jc<=7)||jf==4&&(jc==1||jc==3||jc==5||jc==7)||(jf==6&&((jc>=0&&jc<=3)||(jc>=4&&jc<=7)))){j=12;}
+                	else if((jf==0&&jc==14)||jf==4&&(jc==8||jc==10||jc==12||jc==14)||jf==8&&(jc==2||jc==6||jc==10||jc==14)||(jf==12&&(jc==0||jc==2||jc==4||jc==6||jc==8||jc==10||jc==12||jc==14))){j=13;}
+                	else if((jf==0&&jc==13)||jf==1&&(jc==4||jc==5||jc==12||jc==13)||jf==8&&(jc==1||jc==5||jc==9||jc==13)||(jf==9&&(jc==0||jc==1||jc==4||jc==5||jc==8||jc==9||jc==12||jc==13))){j=14;}
+                	else{j=15;}
+					
+            		if (jf > 0){
+
+            			if (world.getBlockState(pos_2).getBlock() != ModBlocks.saltDirt &&
+            				world.getBlockState(pos_2).getBlock() != ModBlocks.saltDirtLite &&
+            				world.getBlockState(pos_2).getBlock() != ModBlocks.saltOre)
+            			{
+            				if (world.isAirBlock(pos_2.west()) || world.isAirBlock(pos_2.east()) ||
+            					world.isAirBlock(pos_2.north()) || world.isAirBlock(pos_2.south()))
+            				{
+            					world.setBlockState(pos_2, Blocks.stone.getDefaultState(), 3);
+            				}
+            				
+            				else {world.setBlockState(pos_2, ModBlocks.saltOre.getDefaultState(), 3);}
+            			}
+            			
+            			if (rand.nextInt(2) != 0)
+            			{
+            				world.setBlockState(pos_3, Blocks.stone.getDefaultState(), 3);
+            			}
+            					
+                		if (world.getBlockState(pos_1).getBlock() == Blocks.stone ||
+                			world.getBlockState(pos_1).getBlock() == Blocks.coal_ore ||
+                			world.getBlockState(pos_1).getBlock() == Blocks.iron_ore ||
+                		   (world.getBlockState(pos_1).getBlock() == ModBlocks.saltOre &&
+                		    world.getBlockState(pos_1).getBlock().getMetaFromState(world.getBlockState(pos_1)) == 0))
+            			{
+            				world.setBlockState(pos_1, ModBlocks.saltOre.getStateFromMeta(jf), 3);
+            			}
+                			
+            			if (world.getBlockState(pos_1).getBlock() == Blocks.dirt)
+            			{
+            				world.setBlockState(pos_1, ModBlocks.saltDirtLite.getStateFromMeta(j), 3);
+            			}
+            			
+            			if (world.isAirBlock(pos_1))
+        				{
+                			int jld = 0;
+        					if (world.getBlockState(pos_3.north()).getBlock() == ModBlocks.saltLake || world.getBlockState(pos_3.north()).getBlock() == ModBlocks.saltDirt)
+        					{jld = jld + 1;}
+        					if (world.getBlockState(pos_3.east()).getBlock() == ModBlocks.saltLake || world.getBlockState(pos_3.east()).getBlock() == ModBlocks.saltDirt)
+        					{jld = jld + 2;}
+        					if (world.getBlockState(pos_3.south()).getBlock() == ModBlocks.saltLake || world.getBlockState(pos_3.south()).getBlock() == ModBlocks.saltDirt)
+        					{jld = jld + 4;}
+        					if (world.getBlockState(pos_3.west()).getBlock() == ModBlocks.saltLake || world.getBlockState(pos_3.west()).getBlock() == ModBlocks.saltDirt)
+        					{jld = jld + 8;}
+        					
+        					if (jld > 0)
+        					{world.setBlockState(pos_2, ModBlocks.saltLake.getStateFromMeta(jld), 3);}
+        					else
+            				{world.setBlockState(pos_2, ModBlocks.saltDirt.getStateFromMeta(1), 3);}
+        				}
+            					
+                		if (world.getLightFromNeighbors(pos1) >= 12)
+                		{
+            				if (world.getBlockState(pos_1.west()).getBlock() == ModBlocks.saltLake ||
+            					world.getBlockState(pos_1.east()).getBlock() == ModBlocks.saltLake ||
+            					world.getBlockState(pos_1.north()).getBlock() == ModBlocks.saltLake ||
+            					world.getBlockState(pos_1.south()).getBlock() == ModBlocks.saltLake ||
+            					world.getBlockState(pos_1.west()).getBlock() == ModBlocks.saltDirt ||
+            					world.getBlockState(pos_1.east()).getBlock() == ModBlocks.saltDirt ||
+            					world.getBlockState(pos_1.north()).getBlock() == ModBlocks.saltDirt ||
+            					world.getBlockState(pos_1.south()).getBlock() == ModBlocks.saltDirt)
+                            {
+            					
+                    			int jl = 0;
+            					if (world.getBlockState(pos_2.north()).getBlock() == ModBlocks.saltLake || world.getBlockState(pos_2.north()).getBlock() == ModBlocks.saltDirt)
+            					{jl = jl + 1;}
+            					if (world.getBlockState(pos_2.east()).getBlock() == ModBlocks.saltLake || world.getBlockState(pos_2.east()).getBlock() == ModBlocks.saltDirt)
+            					{jl = jl + 2;}
+            					if (world.getBlockState(pos_2.south()).getBlock() == ModBlocks.saltLake || world.getBlockState(pos_2.south()).getBlock() == ModBlocks.saltDirt)
+            					{jl = jl + 4;}
+            					if (world.getBlockState(pos_2.west()).getBlock() == ModBlocks.saltLake || world.getBlockState(pos_2.west()).getBlock() == ModBlocks.saltDirt)
+            					{jl = jl + 8;}
+            					
+            					world.setBlockState(pos_1, ModBlocks.saltLake.getStateFromMeta(jl), 3);
+            					
+                            }
+
+            				if (world.getBlockState(pos.west()).getBlock().getMaterial() != Material.water &&
+            					world.getBlockState(pos.east()).getBlock().getMaterial() != Material.water &&
+            					world.getBlockState(pos.north()).getBlock().getMaterial() != Material.water &&
+            					world.getBlockState(pos.south()).getBlock().getMaterial() != Material.water &&
+            					world.getBlockState(pos.west()).getBlock().getMaterial() != Material.lava &&
+            					world.getBlockState(pos.east()).getBlock().getMaterial() != Material.lava &&
+            					world.getBlockState(pos.north()).getBlock().getMaterial() != Material.lava &&
+            					world.getBlockState(pos.south()).getBlock().getMaterial() != Material.lava)
+            				{
+
+                    			if (world.getBlockState(pos_1).getBlock() == ModBlocks.saltDirtLite &&
+                    			   (world.getBlockState(pos).getBlock() == Blocks.grass))
+                    			{
+                    				world.setBlockState(pos_1, ModBlocks.saltGrass.getStateFromMeta(j), 3);
+                    			}
+                    			
+            					world.setBlockToAir(pos1);
+                				world.setBlockToAir(pos);
+                				
+                				if (rand.nextInt(10) == 0 &&
+                				   (world.getBlockState(pos_1).getBlock() == ModBlocks.saltGrass ||
+                					world.getBlockState(pos_1).getBlock() == ModBlocks.saltDirtLite))
+            					{
+            						world.setBlockState(pos, ModBlocks.saltWort.getStateFromMeta(4), 3);
+            					}
+             				}
+                		}
+            			
+            			else
+            			{
+            				if (world.getLightFromNeighbors(pos.up(2)) >= 12)
+            				{
+            					if (rand.nextInt(2) == 0 &&
+            						world.getBlockState(pos1.west()).getBlock().getMaterial() != Material.water &&
+            						world.getBlockState(pos1.east()).getBlock().getMaterial() != Material.water &&
+            						world.getBlockState(pos1.north()).getBlock().getMaterial() != Material.water &&
+            						world.getBlockState(pos1.south()).getBlock().getMaterial() != Material.water &&
+            						world.getBlockState(pos1.west()).getBlock().getMaterial() != Material.lava &&
+            						world.getBlockState(pos1.east()).getBlock().getMaterial() != Material.lava &&
+            						world.getBlockState(pos1.north()).getBlock().getMaterial() != Material.lava &&
+            						world.getBlockState(pos1.south()).getBlock().getMaterial() != Material.lava)
+            					{
+
+            						if (world.getBlockState(pos).getBlock() == Blocks.dirt)
+            						{
+            							world.setBlockState(pos, world.getBlockState(pos1), 3);
+            						}
+            						
+            						else if (world.getBlockState(pos).getBlock() == ModBlocks.saltDirtLite)
+            						{
+            							int meta = world.getBlockState(pos).getBlock().getMetaFromState(world.getBlockState(pos));
+            							world.setBlockState(pos, ModBlocks.saltGrass.getStateFromMeta(meta), 3);
+            						}
+            						
+            						world.setBlockToAir(pos.up(2));
+            						world.setBlockToAir(pos1);
+            					}
+            				}
+            			}
+            		}
+            		
+            		else if (jc > 0){
+            			
+                        if (world.getBlockState(pos_1).getBlock().getMaterial().isSolid() &&
+                        	world.getBlockState(pos_2).getBlock() != ModBlocks.saltDirtLite &&
+                        	world.getBlockState(pos_2).getBlock() != ModBlocks.saltOre)
+                        {
+                        	world.setBlockState(pos_2, Blocks.stone.getDefaultState(), 3);
+                       	}
+                        	
+                       	if (world.getBlockState(pos_1).getBlock() == Blocks.grass)
+                       	{
+    						world.setBlockToAir(pos);
+                       		world.setBlockState(pos_1, ModBlocks.saltGrass.getStateFromMeta(j), 3);
+                       	}
+                       	
+                       	else if (world.getBlockState(pos_1).getBlock() == Blocks.dirt)
+                       	{
+                       		world.setBlockState(pos_1, ModBlocks.saltDirtLite.getStateFromMeta(j), 3);
+                       	}
+            		}
+            	}
+            }
+            }
+            
+//The bottom and SaltWort
+            for (int x = randPosX - rad; x <= randPosX + rad; x++) {
+            for (int z = randPosZ - rad; z <= randPosZ + rad; z++) {
+            	
+            	BlockPos pos = new BlockPos(x, randPosY, z);
+            	
+            	if (world.getBlockState(pos.down(2)).getBlock() == ModBlocks.saltLake)
+            	{
+            		if (rand.nextInt(3) == 0)
+            		{
+            			world.setBlockState(pos.down(2), ModBlocks.saltDirt.getStateFromMeta(1), 3);
+            			world.setBlockState(pos.down(3), ModBlocks.mudBlock.getDefaultState(), 3);
+            		}
+            	}
+            	
+            	if (world.getBlockState(pos.down()).getBlock() == ModBlocks.saltGrass || world.getBlockState(pos.down()).getBlock() == ModBlocks.saltDirtLite)
+            	{
+            		if (world.isAirBlock(pos))
+            		{
+            			if ((world.getBlockState(pos.west()).getBlock() == ModBlocks.saltWort && world.getBlockState(pos.west()).getBlock().getMetaFromState(world.getBlockState(pos.west())) == 4) ||
+            				(world.getBlockState(pos.east()).getBlock() == ModBlocks.saltWort && world.getBlockState(pos.east()).getBlock().getMetaFromState(world.getBlockState(pos.east())) == 4) ||
+            				(world.getBlockState(pos.north()).getBlock() == ModBlocks.saltWort && world.getBlockState(pos.north()).getBlock().getMetaFromState(world.getBlockState(pos.north())) == 4) ||
+            				(world.getBlockState(pos.south()).getBlock() == ModBlocks.saltWort && world.getBlockState(pos.south()).getBlock().getMetaFromState(world.getBlockState(pos.south())) == 4))
+            			{
+            				if (rand.nextInt(2) == 0)
+            				{
+            					world.setBlockState(pos, ModBlocks.saltWort.getStateFromMeta(rand.nextInt(2) + 2), 3);
+            				}
+            			}
+            		}
+            	}
+            }
+            }
+        }
+        }
+        
+        randPosX = randPosX + rand.nextInt(SaltConfig.saltLakeDistance) - SaltConfig.saltLakeDistance/2;
+        randPosZ = randPosZ + rand.nextInt(SaltConfig.saltLakeDistance) - SaltConfig.saltLakeDistance/2;
+        
+		}
+		}
+		}
+	}
+}

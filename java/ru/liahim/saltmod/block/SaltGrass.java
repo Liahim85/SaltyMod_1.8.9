@@ -1,0 +1,188 @@
+package ru.liahim.saltmod.block;
+
+import java.util.Random;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockDirt;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.IStringSerializable;
+import net.minecraft.world.ColorizerGrass;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeColorHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import ru.liahim.saltmod.init.ModBlocks;
+
+public class SaltGrass extends Block {
+
+	public static final PropertyEnum VARIANT = PropertyEnum.create("variant", SaltGrass.EnumType.class);
+	
+	public SaltGrass(String name, CreativeTabs tab) {
+		super(Material.grass);
+        this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, SaltGrass.EnumType.EMPTY));
+		this.setTickRandomly(true);
+		this.setCreativeTab(tab);
+		this.setStepSound(soundTypeGrass);
+		this.setUnlocalizedName(name);
+		this.setHardness(0.5F);
+		this.setResistance(1F);
+		this.setHarvestLevel("shovel", 0);
+	}
+	
+	@Override
+	public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+	{
+		return this.getDefaultState();
+	}
+    
+	@Override
+	public IBlockState getStateFromMeta(int meta)
+	{
+		return this.getDefaultState().withProperty(VARIANT, SaltGrass.EnumType.byMetadata(meta));
+	}
+    
+	@Override
+	public int getMetaFromState(IBlockState state)
+	{
+		return ((SaltGrass.EnumType)state.getValue(VARIANT)).getMetadata();
+	}
+	
+	@Override
+	protected BlockState createBlockState()
+	{
+		return new BlockState(this, new IProperty[] {VARIANT});
+	}
+	
+    @Override
+	@SideOnly(Side.CLIENT)
+    public int getBlockColor()
+    {
+        return ColorizerGrass.getGrassColor(0.5D, 1.0D);
+    }
+
+    @Override
+	@SideOnly(Side.CLIENT)
+    public int getRenderColor(IBlockState state)
+    {
+        return this.getBlockColor();
+    }
+
+    @Override
+	@SideOnly(Side.CLIENT)
+    public int colorMultiplier(IBlockAccess worldIn, BlockPos pos, int renderPass)
+    {
+        return renderPass == 1 ? BiomeColorHelper.getGrassColorAtPos(worldIn, pos) : 16777215;
+    }
+    
+    @Override
+	@SideOnly(Side.CLIENT)
+    public EnumWorldBlockLayer getBlockLayer()
+    {
+        return EnumWorldBlockLayer.CUTOUT_MIPPED;
+    }
+
+	@Override
+	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
+	{
+        if (!world.isRemote)
+        {
+        	if (world.getBlockState(pos.up()).getBlock().getMaterial() == Material.snow)
+        	{
+        		world.setBlockToAir(pos.up());
+        	}
+  	
+        	if (world.getLightFromNeighbors(pos.up()) < 4 && world.getBlockLightOpacity(pos.up()) > 2)
+            {
+        		int j = world.getBlockState(pos).getBlock().getMetaFromState(state);
+        		world.setBlockState(pos, ModBlocks.saltDirtLite.getStateFromMeta(j), 3);
+            }
+        	
+            else if (world.getLightFromNeighbors(pos.up()) >= 9)
+            {
+                for (int i = 0; i < 4; ++i)
+                {
+                    BlockPos pos2 = pos.add(rand.nextInt(3) - 1, rand.nextInt(5) - 3, rand.nextInt(3) - 1);
+                    IBlockState state2 = world.getBlockState(pos2);
+
+                    if (state2.getBlock() == Blocks.dirt && state2.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT && world.getLightFromNeighbors(pos2.up()) >= 4 && world.getBlockLightOpacity(pos2.up()) <= 2)
+                    {
+                        world.setBlockState(pos2, Blocks.grass.getDefaultState());
+                    }
+                }
+            }	
+        }
+	}
+	
+    @Override
+	public Item getItemDropped(IBlockState state, Random random, int fortune)
+    {
+        return ModBlocks.saltDirtLite.getItemDropped(ModBlocks.saltDirtLite.getDefaultState(), random, fortune);
+    }
+    
+	public enum EnumType implements IStringSerializable
+	{
+		EMPTY(0, "empty"),
+		EMPTY_1(1, "empty_1"),
+		EMPTY_2(2, "empty_2"),
+		SIDE_CNE(3, "side_cne"),
+		SIDE_CES(4, "side_ces"),
+		SIDE_CSW(5, "side_csw"),
+		SIDE_CWN(6, "side_cwn"),
+		SIDE_N(7, "side_n"),
+		SIDE_E(8, "side_e"),
+		SIDE_S(9, "side_s"),
+		SIDE_W(10, "side_w"),
+		SIDE_NE(11, "side_ne"),
+		SIDE_ES(12, "side_es"),
+		SIDE_SW(13, "side_sw"),
+		SIDE_WN(14, "side_wn"),
+		SIDE_NESW(15, "side_nesw");
+
+        private static final SaltGrass.EnumType[] META_LOOKUP = new SaltGrass.EnumType [values().length];
+	    private final int meta;
+	    private final String name;
+
+	    private EnumType(int meta, String name)
+	    {
+	        this.meta = meta;
+	        this.name = name;
+	    }
+	    
+        public int getMetadata()
+        {
+            return this.meta;
+        }
+
+		@Override
+		public String getName()
+		{
+			return name;
+		}
+		
+		public static SaltGrass.EnumType byMetadata(int meta)
+		{
+			if (meta < 0 || meta == 1 || meta == 2 || meta >= META_LOOKUP.length) meta = 0;
+			return META_LOOKUP[meta];
+		}
+		
+        static
+        {
+            for (SaltGrass.EnumType type : values())
+            {
+                META_LOOKUP[type.getMetadata()] = type;
+            }
+        }
+	}
+}

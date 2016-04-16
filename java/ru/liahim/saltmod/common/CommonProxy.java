@@ -4,6 +4,7 @@ import net.minecraft.block.BlockDispenser;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -31,9 +32,11 @@ import ru.liahim.saltmod.dispenser.DispenserBehaviorSaltPinch;
 import ru.liahim.saltmod.entity.EntityRainmaker;
 import ru.liahim.saltmod.entity.EntityRainmakerDust;
 import ru.liahim.saltmod.init.AchievSalt;
+import ru.liahim.saltmod.init.ClientRegister;
 import ru.liahim.saltmod.init.MilkBucketRecipe;
 import ru.liahim.saltmod.init.ModBlocks;
 import ru.liahim.saltmod.init.ModItems;
+import ru.liahim.saltmod.init.SaltConfig;
 import ru.liahim.saltmod.inventory.gui.GuiExtractorHandler;
 import ru.liahim.saltmod.network.ExtractorButtonMessage;
 import ru.liahim.saltmod.network.SaltModEvent;
@@ -234,6 +237,7 @@ public class CommonProxy {
 	
     public void postInit(FMLPostInitializationEvent event)
     {
+	//Milk
     	if (FluidRegistry.isFluidRegistered("milk"))
     	{
     		Fluid milk = FluidRegistry.getFluid("milk");
@@ -246,5 +250,53 @@ public class CommonProxy {
     		FluidContainerRegistry.registerFluidContainer(new FluidStack(milk, FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(Items.milk_bucket), FluidContainerRegistry.EMPTY_BUCKET);
     		ExtractRegistry.instance().addExtracting(milk, ModItems.powderedMilk, 1000, 0.0F);
     	}
+	//Blood
+    	if (FluidRegistry.isFluidRegistered("blood"))
+    	{
+    		Fluid blood = FluidRegistry.getFluid("blood");
+    		GameRegistry.registerItem(ModItems.hemoglobin, "hemoglobin");
+    		ClientRegister.registerItems(ModItems.hemoglobin);
+    		ExtractRegistry.instance().addExtracting(blood, ModItems.hemoglobin, 1000, 1.0F);
+    	}
+	//BOP
+    	Item saladveggie = GameRegistry.findItem("BiomesOPlenty", "saladveggie");
+    	if (saladveggie != null) {
+    		GameRegistry.registerItem(SaltConfig.bop_saltSaladVeggie, "bop_saltSaladVeggie");
+    		ClientRegister.registerItems(SaltConfig.bop_saltSaladVeggie);
+			GameRegistry.addShapelessRecipe(new ItemStack(SaltConfig.bop_saltSaladVeggie), new ItemStack(saladveggie), new ItemStack(ModItems.saltPinch));
+		}
+    	Item saladshroom = GameRegistry.findItem("BiomesOPlenty", "saladshroom");
+    	if (saladshroom != null) {
+    		GameRegistry.registerItem(SaltConfig.bop_saltSaladShroom, "bop_saltSaladShroom");
+    		ClientRegister.registerItems(SaltConfig.bop_saltSaladShroom);
+			GameRegistry.addShapelessRecipe(new ItemStack(SaltConfig.bop_saltSaladShroom), new ItemStack(saladshroom), new ItemStack(ModItems.saltPinch));
+		}
+    	Item ricebowl = GameRegistry.findItem("BiomesOPlenty", "ricebowl");
+    	if (ricebowl != null) {
+    		GameRegistry.registerItem(SaltConfig.bop_saltRiceBowl, "bop_saltRiceBowl");
+    		ClientRegister.registerItems(SaltConfig.bop_saltRiceBowl);
+			GameRegistry.addShapelessRecipe(new ItemStack(SaltConfig.bop_saltRiceBowl), new ItemStack(ricebowl), new ItemStack(ModItems.saltPinch));
+		}
+    	Item turnip = GameRegistry.findItem("BiomesOPlenty", "turnip");
+    	if (turnip != null) {
+    		GameRegistry.registerItem(SaltConfig.bop_pickledTurnip, "bop_pickledTurnip");
+    		ClientRegister.registerItems(SaltConfig.bop_pickledTurnip);
+			GameRegistry.addShapelessRecipe(new ItemStack(SaltConfig.bop_pickledTurnip), new ItemStack(turnip), new ItemStack(turnip), new ItemStack(Items.potionitem), new ItemStack(ModItems.saltPinch));
+		}
+    	Item shroompowder = GameRegistry.findItem("BiomesOPlenty", "shroompowder");
+    	if (shroompowder != null) {
+    		GameRegistry.registerItem(SaltConfig.bop_saltShroomPowder, "bop_saltShroomPowder");
+    		ClientRegister.registerItems(SaltConfig.bop_saltShroomPowder);
+			GameRegistry.addShapelessRecipe(new ItemStack(SaltConfig.bop_saltShroomPowder), new ItemStack(shroompowder), new ItemStack(ModItems.saltPinch));
+		}
+    	Item bop_dart = GameRegistry.findItem("BiomesOPlenty", "dart");
+        ItemStack bop_poisondart = new ItemStack(bop_dart, 1, 1);
+		if (bop_dart != null && FluidRegistry.isFluidRegistered("poison")) {
+			Fluid poisonFl = FluidRegistry.getFluid("poison");
+    		GameRegistry.registerItem(SaltConfig.bop_poison, "bop_poison");
+    		ClientRegister.registerItems(SaltConfig.bop_poison);
+			ExtractRegistry.instance().addExtracting(poisonFl, SaltConfig.bop_poison, 1000, 1.0F);
+			GameRegistry.addShapelessRecipe(bop_poisondart, new ItemStack(bop_dart), SaltConfig.bop_poison);
+		}
     }
 }

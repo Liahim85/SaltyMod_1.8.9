@@ -3,13 +3,13 @@ package ru.liahim.saltmod.init;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemFood;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import ru.liahim.saltmod.SaltMod;
 import ru.liahim.saltmod.common.CommonProxy;
 import ru.liahim.saltmod.item.AchievItem;
-import ru.liahim.saltmod.item.Escargot;
 import ru.liahim.saltmod.item.FizzyDrink;
 import ru.liahim.saltmod.item.MainItems;
 import ru.liahim.saltmod.item.MudArmor;
@@ -24,8 +24,8 @@ public class ModItems {
 	static CreativeTabs tab = CommonProxy.saltTab;
 	
 	public static Item achievItem = new AchievItem("achievItem", null);
-	public static Item escargot = new Escargot("escargot", 3, 2.4F, tab, "Escargot");
-	
+	public static Item escargot = ((ItemFood) new SaltFood("escargot", 3, 2.4F).setAlwaysEdible().setCreativeTab(tab)).setPotionEffect(Potion.confusion.id, 15, 0, 0.3F);
+
 	public static Item salt = new Salt("salt", tab);
 	public static Item saltPinch = new MainItems("saltPinch", tab);
 	public static Item saltWortSeed = new SaltWortSeed("saltWortSeed", tab);
@@ -88,7 +88,8 @@ public class ModItems {
 	public static Item mudBoots = new MudArmor("mudBoots", CommonProxy.mudMaterial, 3);	
 
 	public static Item powderedMilk = new MainItems("powderedMilk", tab);
-	
+	public static Item hemoglobin = new SaltFood("hemoglobin", 2, 4.0F, new PotionEffect(Potion.heal.id, 1, 1)).setAlwaysEdible().setCreativeTab(tab);
+
 	public static Item saltStar = new MainItems("saltStar", tab);
 	public static Item rainmaker = new Rainmaker("rainmaker", tab);
 	

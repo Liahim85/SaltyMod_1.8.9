@@ -5,8 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemFood;
+import net.minecraft.potion.Potion;
 import net.minecraftforge.common.config.Configuration;
 import ru.liahim.saltmod.SaltMod;
+import ru.liahim.saltmod.common.CommonProxy;
+import ru.liahim.saltmod.item.MainItems;
+import ru.liahim.saltmod.item.SaltFood;
 
 public class SaltConfig extends Configuration {
 
@@ -24,6 +31,14 @@ public class SaltConfig extends Configuration {
     public static int extractorVolume;
     public static Map<Integer, Integer> cloudLevel;
     private String[] loadedCloudLevel;
+
+    //BOP
+    public static Item bop_poison = new MainItems("bop_poison", CommonProxy.saltTab);
+    public static Item bop_saltSaladVeggie = ((ItemFood) new SaltFood("bop_saltSaladVeggie", 7, 1.6F, Items.bowl).setMaxStackSize(1).setCreativeTab(CommonProxy.saltTab)).setPotionEffect(Potion.nightVision.id, 60, 1, 0.1F);
+    public static Item bop_saltSaladShroom = ((ItemFood) new SaltFood("bop_saltSaladShroom", 7, 1.6F, Items.bowl).setMaxStackSize(1).setCreativeTab(CommonProxy.saltTab)).setPotionEffect(Potion.jump.id, 30, 1, 0.1F);
+    public static Item bop_saltRiceBowl = new SaltFood("bop_saltRiceBowl", 3, 1.6F, Items.bowl).setMaxStackSize(1).setCreativeTab(CommonProxy.saltTab);
+    public static Item bop_saltShroomPowder = ((ItemFood) new SaltFood("bop_saltShroomPowder", 2, 1.1F).setAlwaysEdible().setCreativeTab(CommonProxy.saltTab)).setPotionEffect(Potion.confusion.id, 15, 0, 0.3F);
+    public static Item bop_pickledTurnip = new SaltFood("bop_pickledTurnip", 7, 1.8F, Items.glass_bottle).setMaxStackSize(1).setCreativeTab(CommonProxy.saltTab);
 
     private File file;
 

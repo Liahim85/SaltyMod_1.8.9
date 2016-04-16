@@ -77,10 +77,10 @@ public class TileEntityExtractor extends TileEntityLockable implements ITickable
 
 			if (liquid)
 			{
-				Fluid blockFluid;
-				if (blockUp.getMaterial() == Material.water) {blockFluid = FluidRegistry.WATER;}
+				Fluid blockFluid = null;
+				if (FluidRegistry.lookupFluidForBlock(blockUp) != null) {blockFluid = FluidRegistry.lookupFluidForBlock(blockUp);}
+				else if (blockUp.getMaterial() == Material.water) {blockFluid = FluidRegistry.WATER;}
 				else if (blockUp.getMaterial() == Material.lava) {blockFluid = FluidRegistry.LAVA;}
-				else {blockFluid = FluidRegistry.lookupFluidForBlock(blockUp);}
 
 				if (blockFluid != null && !blockFluid.isGaseous() && blockUp.getMetaFromState(stateUp) == 0)
 				{

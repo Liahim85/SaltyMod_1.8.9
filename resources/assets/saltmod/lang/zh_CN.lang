@@ -40,6 +40,7 @@ item.powderedMilk.name=奶粉
 item.saltStar.name=烟火之盐星
 item.rainmaker.name=人工降雨器
 item.rainmaker.tooltip=需要在云层之上引爆
+item.hemoglobin.name=血红蛋白
 
 item.saltBeefCooked.name=咸熟牛排
 item.saltPorkchopCooked.name=咸熟猪排
@@ -103,6 +104,13 @@ item.muffin.mess.0=祝你胃口好！
 item.muffin.mess.1=嗯...很好吃呐！
 item.muffin.mess.2=啊喏姆喏姆喏姆...
 item.muffin.mess.3=好好吃！
+
+item.bop_poison.name=毒药
+item.bop_saltSaladVeggie.name=咸素食沙拉
+item.bop_saltSaladShroom.name=咸蘑菇沙拉
+item.bop_saltRiceBowl.name=咸一碗饭
+item.bop_pickledTurnip.name=腌芜菁
+item.bop_saltShroomPowder.name=咸蘑菇粉
 
 achievement.salt=盐！
 achievement.salt.desc=得到盐！

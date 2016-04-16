@@ -39,6 +39,7 @@ item.powderedMilk.name=Powdered Milk
 item.saltStar.name=Salt Star
 item.rainmaker.name=Rainmaker
 item.rainmaker.tooltip=Should explode above the clouds
+item.hemoglobin.name=Hemoglobin
 
 item.saltBeefCooked.name=Salty Steak
 item.saltPorkchopCooked.name=Salty Cooked Porkchop
@@ -102,6 +103,13 @@ item.muffin.mess.0=Bon Appetit!
 item.muffin.mess.1=Mmm... So tasty!
 item.muffin.mess.2=Om Nom Nom
 item.muffin.mess.3=Yummy!
+
+item.bop_poison.name=Poison
+item.bop_saltSaladVeggie.name=Salty Veggie Salad
+item.bop_saltSaladShroom.name=Salty Shroom Salad
+item.bop_saltRiceBowl.name=Salty Bowl of Rice
+item.bop_pickledTurnip.name=Pickled Turnip
+item.bop_saltShroomPowder.name=Salty Shroom Powder
 
 achievement.salt=Salt!
 achievement.salt.desc=Get salt

@@ -39,6 +39,7 @@ item.powderedMilk.name=Leite em Pó
 item.saltStar.name=Estrela de Sal
 item.rainmaker.name=Criador de Chuva
 item.rainmaker.tooltip=Deve explodir acima das nuvens
+item.hemoglobin.name=Hemoglobina
 
 item.saltBeefCooked.name=Bife Salgado
 item.saltPorkchopCooked.name=Costeleta de Porco Assada Salgada
@@ -102,6 +103,13 @@ item.muffin.mess.0=Bon Appetit!
 item.muffin.mess.1=Mmm... Tão saboroso!
 item.muffin.mess.2=Om Nom Nom
 item.muffin.mess.3=Yummy!
+
+item.bop_poison.name=Veneno
+item.bop_saltSaladVeggie.name=Salada Vegan Salgado
+item.bop_saltSaladShroom.name=Salada de Cogumelos Salgado
+item.bop_saltRiceBowl.name=Tigela de Arroz Salgado
+item.bop_pickledTurnip.name=Nabo em Salmoura
+item.bop_saltShroomPowder.name=Pó de Cogumelo Salgado
 
 achievement.salt=Sal!
 achievement.salt.desc=Apanha Sal

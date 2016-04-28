@@ -99,24 +99,83 @@ public class SaltDirtLite extends Block {
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
     {
-		boolean S = (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() == ModItems.saltPinch);
-		ItemStack current = player.getCurrentEquippedItem();
-		
-			if (S)
-			{
-				if (world.getBlockState(pos.up()).getBlock() == ModBlocks.saltWort) {player.addStat(AchievSalt.saltWortFarm, 1);}
-				
-				int meta = world.getBlockState(pos).getBlock().getMetaFromState(state);
-			
-				if (meta == 0 || meta > 2)
-				{world.setBlockState(pos, this.getStateFromMeta(1), 3); if (!player.capabilities.isCreativeMode){--current.stackSize;}}
-				else if (meta == 1)
-				{world.setBlockState(pos, this.getStateFromMeta(2), 3); if (!player.capabilities.isCreativeMode){--current.stackSize;}}
-				else if (meta == 2)
-				{world.setBlockState(pos, ModBlocks.saltDirt.getDefaultState(), 3); if (!player.capabilities.isCreativeMode){--current.stackSize;}}
+		if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() == ModItems.saltPinch)
+		{
+			ItemStack current = player.getCurrentEquippedItem();
+
+			if (world.getBlockState(pos.up()).getBlock() == ModBlocks.saltWort) {player.addStat(AchievSalt.saltWortFarm, 1);}
+
+			int meta = world.getBlockState(pos).getBlock().getMetaFromState(state);
+
+			if (meta == 0 || meta > 2)
+			{world.setBlockState(pos, this.getStateFromMeta(1), 3); if (!player.capabilities.isCreativeMode){--current.stackSize;}}
+			else if (meta == 1)
+			{world.setBlockState(pos, this.getStateFromMeta(2), 3); if (!player.capabilities.isCreativeMode){--current.stackSize;}}
+			else if (meta == 2)
+			{world.setBlockState(pos, ModBlocks.saltDirt.getDefaultState(), 3); if (!player.capabilities.isCreativeMode){--current.stackSize;}}
+			return true;
+		}
+
+		if (player.capabilities.isCreativeMode) {
+			if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() == ModItems.salt) {
+				int i = state.getBlock().getMetaFromState(state);
+				if (side.getIndex() <= 1) {
+					if (i == 0) i = 3;
+					else if (i < 3 || i > 5) i = 0;
+					else i += 1;}
+				if (side == EnumFacing.NORTH) {
+					if (i == 4) i = 11;
+					else if (i == 5) i = 14;
+					else if (i < 7) i = 7;
+					else if (i == 7) i = 0;
+					else if (i == 8) i = 11;
+					else if (i == 9) i = 15;
+					else if (i == 10) i = 14;
+					else if (i == 11) i = 8;
+					else if (i == 14) i = 10;
+					else if (i < 15) i = 15;
+					else i = 9;}
+				if (side == EnumFacing.EAST) {
+					if (i == 5) i = 12;
+					else if (i == 6) i = 11;
+					else if (i < 7) i = 8;
+					else if (i == 7) i = 11;
+					else if (i == 8) i = 0;
+					else if (i == 9) i = 12;
+					else if (i == 10) i = 15;
+					else if (i == 11) i = 7;
+					else if (i == 12) i = 9;
+					else if (i < 15) i = 15;
+					else i = 10;}
+				if (side == EnumFacing.SOUTH) {
+					if (i == 3) i = 12;
+					else if (i == 6) i = 13;
+					else if (i < 7) i = 9;
+					else if (i == 7) i = 15;
+					else if (i == 8) i = 12;
+					else if (i == 9) i = 0;
+					else if (i == 10) i = 13;
+					else if (i == 12) i = 8;
+					else if (i == 13) i = 10;
+					else if (i < 15) i = 15;
+					else i = 7;}
+				if (side == EnumFacing.WEST) {
+					if (i == 3) i = 14;
+					else if (i == 4) i = 13;
+					else if (i < 7) i = 10;
+					else if (i == 7) i = 14;
+					else if (i == 8) i = 15;
+					else if (i == 9) i = 13;
+					else if (i == 10) i = 0;
+					else if (i == 13) i = 9;
+					else if (i == 14) i = 7;
+					else if (i < 15) i = 15;
+					else i = 8;}
+				world.setBlockState(pos, this.getStateFromMeta(i), 3);
 				return true;
 			}
-			
+		}
+
         return false;
     }
 	

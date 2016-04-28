@@ -97,6 +97,26 @@ public class SaltLake extends Block {
     		}
     	}
 	}
+    
+	@Override
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
+	{
+		if (player.capabilities.isCreativeMode && side.getIndex() > 1)
+		{
+			if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() == ModItems.salt)
+			{
+				int i = state.getBlock().getMetaFromState(state);
+				if (side == EnumFacing.NORTH) {if (i % 2 < 1) i += 1; else i -= 1;}
+				if (side == EnumFacing.EAST) {if (i % 4 < 2) i += 2; else i -= 2;}
+				if (side == EnumFacing.SOUTH) {if (i % 8 < 4) i += 4; else i -= 4;}
+				if (side == EnumFacing.WEST) {if (i < 8) i += 8; else i -= 8;}
+				world.setBlockState(pos, this.getStateFromMeta(i), 3);
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
     @Override
 	public Item getItemDropped(IBlockState state, Random random, int fortune)
